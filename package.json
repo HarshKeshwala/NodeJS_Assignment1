@@ -3,8 +3,8 @@
     "version": "1.0.0",
     "description": "RestAPI - Products - CRUD",
     "dependencies": {
-        "restify": "^4.1.1",
-        "save": "^2.3.0"
+        "restify": "^4.3.4",
+        "save": "^2.3.2"
     },
     "author": "HarshK",
     "private": true,
