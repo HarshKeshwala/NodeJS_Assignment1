@@ -2,15 +2,15 @@ var SERVER_NAME = 'product-api'
 var PORT = 2000;
 var HOST = '127.0.0.1';
 
-var sendGetReq = 0;
-var sendPostReq = 0;
+var sendGetCount = 0;
+var sendPostCount = 0;
 
 var restify = require('restify')
 
-  // Get a persistence engine for the users
+  // getting a persistence engine for the products
   , productsSave = require('save')('products')
 
-  // Create the restify server
+  // creating the restify server
   , server = restify.createServer({ name: SERVER_NAME})
 
   server.listen(PORT, HOST, function () {
@@ -22,62 +22,58 @@ var restify = require('restify')
 })
 
 server
-  // Allow the use of POST
+  // allowing the use of POST
   .use(restify.fullResponse())
 
-  // Maps req.body to req.params so there is no switching between them
+  // maping request.body to request.params so there is no switching between them
   .use(restify.bodyParser())
 
-// Get all products in the system
-server.get('/sendGet', function (req, res, next) {
-    sendGetReq++;
+// method to get all products
+server.get('/sendGet', function (request, response, next) {
+
+  sendGetCount++; // increased by every visit to sendGet
+  console.log("Processed Request Counts: sendGET: "+sendGetCount+", sendPost: "+sendPostCount);
   // find every entity within the given collection
   productsSave.find({}, function (error, products) {
     // return all of the products in the system
-    res.send(products)
+    response.send(products)
   })
-  console.log("Processed Request Count --> sendGet: %s | sendPost %s", sendGetReq, sentPostReq);
 })
 
 
-// create a new product
-server.post('/sendPost', function (req, res, next) {
+// method to create a new product
+server.post('/sendPost', function (request, response, next) {
+  
+  sendPostCount++; // // increased by every visit to sendPost
+  console.log("Processed Request Counts: sendGET: "+sendGetCount+", sendPost: "+sendPostCount);
+  // name is compulsory
+  if (request.params.name === undefined ) {
+    return next(new restify.InvalidArgumentError('Name must be supplied'))
+  }
+  // price is compulsory
+  if (request.params.price === undefined ) {
+    return next(new restify.InvalidArgumentError('Price must be supplied'))
+  }
 
-    sendPostReq++;
-  // make sure name is defined
-  if (req.params.name === undefined ) {
-    console.log("Processed Request Count --> sendGet: %s | sendPost %s", sendGetReq, sentPostReq);
-    // If there are any errors, pass them to next in the correct format
-    return next(new restify.InvalidArgumentError('name must be supplied'))
-  }
-  if (req.params.price === undefined ) {
-    console.log("Processed Request Count --> sendGet: %s | sendPost %s", sendGetReq, sentPostReq);
-    // If there are any errors, pass them to next in the correct format
-    return next(new restify.InvalidArgumentError('price must be supplied'))
-  }
   var newProduct = {
-		name: req.params.name, 
-		price: req.params.price
+		name: request.params.name, 
+		price: request.params.price
 	}
 
-  // create the product using the persistence engine
+  // creating the product using the persistence engine
   productsSave.create( newProduct, function (error, products) {
-    console.log("Processed Request Count --> sendGet: %s | sendPost %s", sendGetReq, sentPostReq);
-    // If there are any errors, pass them to next in the correct format
     if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
-
     // send product if no issues
-    res.send(201, products)
+    response.send(201, products)
   })
 })
 
-// delete all products
-server.del('/sendDelete', function (req, res, next) {
+// method to delete all products
+server.del('/sendDelete', function (request, response, next) {
   // delete products with the persistence engine
   productsSave.deleteMany({},function (error, products) {
-    // If there are any errors, pass them to next in the correct format
     if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
     // Send a 200 OK response
-    res.send(200)
+    response.send(200)
   })
 })
