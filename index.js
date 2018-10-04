@@ -1,5 +1,5 @@
 var SERVER_NAME = 'product-api'
-var PORT = 2000;
+var PORT = 3000;
 var HOST = '127.0.0.1';
 
 var sendGetCount = 0;
@@ -47,8 +47,8 @@ server.post('/sendPost', function (request, response, next) {
   sendPostCount++; // // increased by every visit to sendPost
   console.log("Processed Request Counts: sendGET: "+sendGetCount+", sendPost: "+sendPostCount);
   // name is compulsory
-  if (request.params.name === undefined ) {
-    return next(new restify.InvalidArgumentError('Name must be supplied'))
+  if (request.params.product === undefined ) {
+    return next(new restify.InvalidArgumentError('Product must be supplied'))
   }
   // price is compulsory
   if (request.params.price === undefined ) {
@@ -56,7 +56,7 @@ server.post('/sendPost', function (request, response, next) {
   }
 
   var newProduct = {
-		name: request.params.name, 
+		product: request.params.product, 
 		price: request.params.price
 	}
 

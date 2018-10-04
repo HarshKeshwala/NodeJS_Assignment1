@@ -1,0 +1,20 @@
+User->Web API: Http Request
+Note right of User:  sendPost \nhttp://127.0.0.1:3000/sendPost\n{name:"Pencil", price:8}
+Web API->Data Access: Create Product
+Data Access->DB: Insert Product
+Note right of Product:  [{name:"Pencil", price:8, _id=1}]
+
+DB->Data Access: Return Product
+Data Access->Web API: Return Product
+Web API->User: Http Response
+Note right of User:  [status: ok]
+
+User->Web API: Http Request
+Note right of User:  sendGet \nhttp://127.0.0.1:3000/sendGet
+Web API->Data Access: Request Products
+Data Access->DB: Get Products
+Note right of Product:  [{name:"Pencil", price:8, _id=1}]
+
+DB->Data Access: Return Products
+Data Access->Web API: Return Products
+Web API->User: Http Response
